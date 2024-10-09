@@ -8,18 +8,28 @@ import { Rating } from '@mui/material';
 
 const App = () => {
     const { isLoading, isAuthenticated, user } = useAuth0();
-    const objectId = localStorage.getItem('objectId');
     const [reviews, setReviews] = useState({}); // Store reviews as an object
     const [reviewText, setReviewText] = useState('');
     const [rating, setRating] = useState(0);
     const [editingReviewId, setEditingReviewId] = useState(null); // Tracks the ID of the review being edited
     const [hasSubmittedReview, setHasSubmittedReview] = useState(false); // Tracks if the user has submitted a review
+    const [objectId, setObjectId] = useState(localStorage.getItem('objectId')); // State to track current objectId
 
     const handleRatingSelect = (event, newRating) => {
         setRating(newRating);
     };
 
     useEffect(() => {
+        // Update objectId from URL and localStorage whenever the component mounts
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentObjectId = urlParams.get('objectId');
+
+        // Update localStorage and state whenever a new objectId is detected in the URL
+        if (currentObjectId) {
+            localStorage.setItem('objectId', currentObjectId);
+            setObjectId(currentObjectId); // Update state as well
+        }
+
         const fetchReviews = async () => {
             try {
                 const { data, error } = await supabase.from('reviews').select('*');
@@ -33,7 +43,7 @@ const App = () => {
                 });
                 setReviews(formattedReviews);
 
-                // Check if the user has already submitted a review
+                // Check if the user has already submitted a review for the current objectId
                 if (user && objectId) {
                     setHasSubmittedReview(!!formattedReviews[objectId]?.[user.sub]);
                 }
@@ -41,8 +51,9 @@ const App = () => {
                 console.error('Error fetching reviews:', error);
             }
         };
+
         fetchReviews();
-    }, [user, objectId]);
+    }, [user, objectId]); // Re-run effect when user or objectId changes
 
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
@@ -54,7 +65,7 @@ const App = () => {
                         { user: user.nickname, picture: user.picture, user_id: user.sub, objectId, rating, review: reviewText },
                     ]);
                 if (error) throw error;
-                // Update the reviews state
+
                 const newReview = { user: user.nickname, picture: user.picture, user_id: user.sub, objectId, rating, review: reviewText };
                 setReviews((prevReviews) => ({
                     ...prevReviews,
@@ -63,11 +74,10 @@ const App = () => {
                         [user.sub]: newReview,
                     },
                 }));
-                setHasSubmittedReview(true); // User has now submitted a review
+                setHasSubmittedReview(true);
                 setReviewText('');
                 setRating(0);
                 setEditingReviewId(null); // Reset editing state
-                console.log('user:', user);
             } catch (error) {
                 console.error('Error submitting review:', error);
             }
@@ -89,6 +99,7 @@ const App = () => {
                     .update({ review: reviewText, rating: rating })
                     .match({ user_id: user.sub, objectId });
                 if (error) throw error;
+
                 setReviews((prevReviews) => ({
                     ...prevReviews,
                     [objectId]: {
@@ -109,7 +120,6 @@ const App = () => {
         }
     };
 
-    // ... rest of the component
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -118,16 +128,11 @@ const App = () => {
         <div className="centerDivStyle">
             <div className="review-card">
                 <div className="logout-container">
-                    {isAuthenticated ? (
-                        <LogoutButton />
-                    ) : (
-                        null
-                    )}
+                    {isAuthenticated ? <LogoutButton /> : null}
                 </div>
                 <h1>Hello, Hope You Like Our Product</h1>
                 {isAuthenticated ? (
                     <>
-                        {/* <h1>rate me</h1> */}
                         {(editingReviewId !== null || !hasSubmittedReview) && (
                         <div className="rating-container">
                             <Rating
@@ -160,7 +165,7 @@ const App = () => {
                                         <ul>
                                             {reviews[objectId] && 
                                                 Object.values(reviews[objectId])
-                                                    .filter(item => item.user_id === user.sub) // Filter reviews by user_id
+                                                    .filter(item => item.user_id === user.sub)
                                                     .map((item, index) => (
                                                         <li key={index}>
                                                             <strong>{item.user}:</strong> {item.review} ({item.rating}/5)
@@ -187,17 +192,6 @@ const App = () => {
                                 )}
                             </>
                         )}
-                        {/* <h2>Other Reviews</h2>
-                        <ul>
-                            {reviews[objectId] &&
-                                Object.entries(reviews[objectId])
-                                    .filter(([userId]) => userId !== user.sub)
-                                    .map(([userId, item], index) => (
-                                        <li key={index}>
-                                            <strong>{item.user}:</strong> {item.review} ({item.rating}/5)
-                                        </li>
-                                    ))}
-                        </ul> */}
                     </>
                 ) : (
                     <LoginButton />
