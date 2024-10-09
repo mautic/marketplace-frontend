@@ -15,17 +15,11 @@ Clone the repository.
 ```bash
 https://github.com/mautic/marketplace-frontend.git
 ```
-Replace your auth0 credentials and supabase credentials in the program.
+Replace your auth0 credentials in `src/index.jsx` and supabase credentials in `src/supabase.js`.
 
 Install Dependencies
 ```bash
 npm install
-```
-Install the more Dependencies for project
-```bash
-npm install @auth0/auth0-react
-npm install @supabase/supabase-js
-npm install @mui/material @emotion/react @emotion/styled
 ```
 
 Start the Development Server
