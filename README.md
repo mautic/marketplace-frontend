@@ -1,4 +1,4 @@
- ## Project Overview  
+# Project Overview  
 
 This project adds **rating and review functionalities** to the **Mautic Marketplace**, allowing users to provide feedback on marketplace items.  
 
