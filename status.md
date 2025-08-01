@@ -43,6 +43,9 @@
 - **DNS & Production Setup**  
   Coordinating with the team to establish a stable DNS for the API, avoiding temporary redirect hacks.
 
+- **Review Approvals**  
+  Admits or Moderators to approve the Reviews.
+
 ---
 
 ## 🗣️ Key Discussions & Decisions
