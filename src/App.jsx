@@ -32,7 +32,7 @@ const App = () => {
 
         const fetchReviews = async () => {
             try {
-                const { data, error } = await supabase.from('reviews').select('*');
+                const { data, error } = await supabase.from('reviews').select('*'); // FIXME: Selects everything from thr DB(By Object ID)
                 if (error) throw error;
                 const formattedReviews = {};
                 data.forEach((review) => {
@@ -194,7 +194,7 @@ const App = () => {
                         )}
                     </>
                 ) : (
-                    <LoginButton />
+                    <LoginButton /> // FIXME: Contain ina components Folder
                 )}
             </div>
         </div>
