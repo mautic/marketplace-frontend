@@ -1,8 +1,9 @@
+import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import Login from './components/auth/Login';
-import ReviewsList from './components/reviews/ReviewsList';
-import ReviewForm from './components/reviews/ReviewForm';
 import LogoutButton from './components/auth/LogoutButton';
+import ReviewForm from './components/reviews/ReviewForm';
+import ReviewsList from './components/reviews/ReviewsList';
 
 const App = () => {
   const { isAuthenticated, isLoading, user } = useAuth0();
