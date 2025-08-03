@@ -1,37 +1,31 @@
-import { useState, useEffect } from 'react';
-import { supabase } from './supabaseClient';
+import { useAuth0 } from '@auth0/auth0-react';
 import Login from './components/auth/Login';
 import ReviewsList from './components/reviews/ReviewsList';
+import ReviewForm from './components/reviews/ReviewForm';
+import LogoutButton from './components/auth/LogoutButton';
 
 const App = () => {
-  const [session, setSession] = useState(null);
+  const { isAuthenticated, isLoading, user } = useAuth0();
 
-  useEffect(() => {
-    // Check for an existing session on initial load
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    // Listen for auth state changes to update the session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    // Cleanup the subscription on unmount
-    return () => subscription.unsubscribe();
-  }, []);
+  if (isLoading) {
+    return <div className="loading-state">Loading...</div>;
+  }
 
   return (
     <div className="App">
-      {!session ? (
+      {!isAuthenticated ? (
         <Login />
       ) : (
         <div className="main-content">
-          <p>Welcome, {session.user.email}!</p>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Mautic Marketplace</h1>
+            <LogoutButton />
+          </div>
+          <p>Welcome, {user.name}!</p>
           <div className="review-section">
             <h2>Marketplace Reviews</h2>
-            {/* Review form & list components will go here */}
-            <ReviewsList session={session} />
+            <ReviewForm />
+            <ReviewsList />
           </div>
         </div>
       )}
