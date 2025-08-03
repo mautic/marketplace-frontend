@@ -62,8 +62,6 @@ const ReviewForm = () => {
         throw error;
       }
 
-      console.log('Review submitted:', data);
-      
       // Reset form fields
       setRating(0);
       setTitle('');
