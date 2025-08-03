@@ -16,7 +16,8 @@ const ReviewsList = () => {
         setLoading(true);
         const { data, error } = await supabase
           .from('reviews')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: false }); // Sort by newest first
 
         if (error) {
           throw error;
@@ -32,18 +33,25 @@ const ReviewsList = () => {
 
     fetchReviews();
 
-    // Set up a real-time subscription to listen for changes
-    const subscription = supabase
-      .from('reviews')
-      .on('*', payload => {
-        // Automatically re-fetch reviews when a change occurs
-        fetchReviews();
-      })
+    // Set up a real-time subscription using a channel
+    const channel = supabase.channel('reviews-channel');
+    channel
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'reviews'
+        },
+        () => {
+          fetchReviews();
+        }
+      )
       .subscribe();
 
     // Clean up the subscription on unmount
     return () => {
-      supabase.removeSubscription(subscription);
+      supabase.removeChannel(channel);
     };
   }, []); // Empty dependency array means this runs once on mount
 
