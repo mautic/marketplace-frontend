@@ -44,7 +44,7 @@ const ReviewForm = () => {
 
       // Get the Supabase JWT token from Auth0
       const token = await getAccessTokenSilently({
-        audience: 'https://jcdbrnrngjowiuuobfva.supabase.co/rest/v1/',
+        audience: `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/`,
         scope: 'openid profile email',
       });
 
