@@ -46,8 +46,9 @@ In the `src/index.jsx` file, configure these credentials by replacing the placeh
 ##### **Step 3.2: Setup Supabase Credentials**  
 
 1. Sign up or log in to [Supabase](https://supabase.com/).  
-2. Create a new project in the Supabase dashboard.  
-3. Navigate to **Project Settings** → **API** and copy the following credentials:  
+2. Create a new project in the Supabase dashboard.
+3. Navigate to **Authentication** → **Providers** and enable Auth0.
+4. Navigate to **Project Settings** → **API** and copy the following credentials:  
    - **Supabase URL**  
    - **Anon Public Key**  
 
