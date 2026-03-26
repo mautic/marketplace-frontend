@@ -1,3 +1,5 @@
+# This repository is archived as https://github.com/mautic/mautic-public-marketplace replaces it.
+
 # Project Overview  
 
 This project adds **rating and review functionalities** to the **Mautic Marketplace**, allowing users to provide feedback on marketplace items.  
